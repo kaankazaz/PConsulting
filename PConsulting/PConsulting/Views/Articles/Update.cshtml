@@ -1,0 +1,75 @@
+﻿@model PConsulting.Data.Article
+@{
+    ViewData["Title"] = "Edit Article";
+}
+<div class="modal-header">
+    <h4 class="modal-title" id="MyModalTitle">Edit Article</h4>
+</div>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "Update", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="modal-body">
+        <div class="form-horizontal">
+            @Html.HiddenFor(m => m.Id)
+            <div class="form-group">
+                @Html.LabelFor(m => m.ArticleTitle, htmlAttributes: new { @class = "control-label col-sm-3" })
+                <div class="col-sm-9">
+                    @Html.EditorFor(m => m.ArticleTitle, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(m => m.ArticleTitle, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Body, htmlAttributes: new { @class = "control-label col-sm-3" })
+                <div class="col-sm-9">
+                    @Html.TextAreaFor(m => m.Body, new { @class = "form-control", @rows = 5 })
+                    @Html.ValidationMessageFor(m => m.Body, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Author, htmlAttributes: new { @class = "control-label col-sm-3" })
+                <div class="col-sm-9">
+                    @Html.EditorFor(m => m.Author, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(m => m.Author, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnCancel">Cancel</button>
+        <input type="submit" class="btn btn-primary" value="Save Article" id="btnSubmit" />
+    </div>
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $.validator.unobtrusive.parse('#Update');
+            $("#btnSubmit").click(function () {
+                if (!$("#Update").valid()) {
+                    return false;
+                }
+            });
+
+
+
+        });
+
+        $("#btnCancel").click(function () {
+            location.href = '/Articles/Index';
+        });
+
+        $(function () {
+            var a = '@TempData["msg"]';
+            if (a != '')
+              {  toastr.error("", a);
+                 window.location = '#2249506';
+              }
+        })
+    </script>
+}  

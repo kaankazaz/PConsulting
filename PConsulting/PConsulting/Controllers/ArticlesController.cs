@@ -4,6 +4,7 @@ using PConsulting.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 
 namespace PConsulting.Controllers
@@ -62,5 +63,99 @@ namespace PConsulting.Controllers
         }
         #endregion
 
+        #region Create
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(Article postedObject)
+        {
+            if (_articleService.Create(postedObject))
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(postedObject);
+
+
+        }
+        #endregion
+
+        #region Update
+        [HttpGet]
+        public IActionResult Update(int Id)
+        {
+            var requestedObject = _articleService.GetById(Id);
+
+            return View(requestedObject);
+        }
+
+        [HttpPost]
+        public IActionResult Update(Article postedObject)
+        {
+            bool isSuccessful = false;
+
+            if (postedObject.Id == 0)
+            {
+                isSuccessful = _articleService.Create(postedObject);
+            }
+            else
+            {
+                var originalArticle = _articleService.GetById(postedObject.Id);
+
+                originalArticle.ArticleTitle = postedObject.ArticleTitle;
+                originalArticle.Body = postedObject.Body;
+                originalArticle.Author = postedObject.Author;
+                originalArticle.LastEditDate = DateTime.Now;
+
+                isSuccessful = _articleService.Update(originalArticle);
+            }
+
+            if (isSuccessful)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(postedObject);
+        }
+        #endregion
+
+        #region Delete
+        [HttpGet]
+        public IActionResult Delete(int Id)
+        {
+            try
+            {
+                var objectToRemove = _articleService.GetById(Id);
+
+                if (objectToRemove == null)
+                {
+                    return StatusCode(Convert.ToInt32(HttpStatusCode.NotFound));
+                }
+
+                return PartialView("_Delete", objectToRemove);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Delete(Article postedObject)
+        {
+            if (_articleService.SetApproval(postedObject.Id, false))
+            {
+                return Json(new { success = true, message = "Article removed successfully." });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Error occured while removing article." });
+            }
+        }
+        #endregion
     }
 }

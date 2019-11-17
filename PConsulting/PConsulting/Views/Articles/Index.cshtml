@@ -47,6 +47,7 @@
                             <th data-field="Id" data-visible="false" data-sortable="false" data-halign="center" data-align="center">Id</th>
                             <th data-field="ArticleTitle" data-sortable="true" data-halign="center" data-align="Left" data-width="350">Title</th>
                             <th data-field="PublishDate" data-sortable="true" data-halign="center" data-align="center" data-width="80">Publish Date</th>
+                            <th data-field="operate" data-align="center" data-width="150" data-events="operateEvents" data-formatter="operateFormatter"></th>
                         </tr>
                     </thead>
                 </table>
@@ -60,9 +61,83 @@
     @section scripts {
         <script type="text/javascript">
 
+            $(function () {
+                $.ajaxSetup({ cache: false });
+                $("a[data-modal]").on("click", function (e) {
+                    $("#MyModalContent").load(this.href, function () {
+                        $("#MyModal").modal({
+                            keyboard: false
+                        }, 'show');
+                        bindForm(this);
+                    });
+                    return false;
+                });
+            });
+
+            function bindForm(dialog) {
+                $('form', dialog).submit(function () {
+                    $.ajax({
+                        url: this.action,
+                        type: this.method,
+                        data: $(this).serialize(),
+                        success: function (result) {
+                            if (result.success) {
+                                $("#MyModal").modal('hide');
+                                toastr.success(result.message);
+                                //Update grid
+                                var $table = $('#table');
+                                $table.bootstrapTable('refresh', { silent: true });
+                            }
+                            else {
+                                $("#MyModal").modal('show');
+                                toastr.error(result.message);
+                                bindForm(dialog);
+                            }
+                        },
+                        error: function (xml, message, text) {
+                            toastr.error("Msg: " + message + ", Text: " + text);
+                        }
+                    });
+                    return false;
+                });
+            }
+
             var $table = $('#table'),
                 $remove = $('#remove'),
                 selections = [];
+            function operateFormatter(value, row, index) {
+                return [
+                    '<a id="editModal" href="/Articles/Update/',
+                    row.Id,
+                    '" class="btn btn-info editRecord">Edit</a>&nbsp;&nbsp;',
+                    '<a id="deleteModal" data-toggle="modal" asp-action="Delete" asp-route-id="',
+                    row.Id,
+                    '" data-target="#modal-action-delete" class="btn btn-danger deleteRecord" style="color:white" onclick="Delete(',
+                    row.Id,
+                    ') ">Remove</a>'
+                ].join('');
+            }
+
+            window.operateEvents = {
+                'click .deleteRecord': function (e, value, row, index) {
+                    Delete(row.Id);
+                }
+            };
+
+
+            var Delete = function (ID) {
+                $.ajaxSetup({ cache: false });
+                var Url = "/Articles/Delete/" + ID;
+                $("#MyModalContent").load(Url, function () {
+                    $("#MyModal").modal({
+                        //backdrop: 'static',
+                        keyboard: false
+                    }, 'show');
+                    bindForm(this);
+                });
+                return false;
+            }
+
 
             function highLightRow($tr) {
                 $tr.addClass('highlight').siblings().removeClass('highlight');
