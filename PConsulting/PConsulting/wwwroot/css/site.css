@@ -54,3 +54,33 @@ body {
   height: 60px;
   line-height: 60px; /* Vertically center the text there */
 }
+
+/* ----- Social Media buttons -----*/
+.faSocial {
+    padding: 15px;
+    font-size: 20px;
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 50%;
+}
+
+
+    /* Add a hover effect */
+    .faSocial:hover {
+        opacity: 0.7;
+        text-decoration: none;
+    }
+
+/* Facebook */
+.fa-facebook {
+    background: #3B5998;
+    color: white;
+}
+
+/* Twitter */
+.fa-twitter {
+    background: #55ACEE;
+    color: white;
+}

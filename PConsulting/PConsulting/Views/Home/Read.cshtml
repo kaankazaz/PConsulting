@@ -1,0 +1,66 @@
+﻿@model PConsulting.ViewModels.ReadArticleVM
+
+@{
+    ViewData["Title"] = Model?.Article.ArticleTitle ?? "";
+}
+<br />
+<div class="row">
+    <div class="col-9">
+        <h3 class="text-danger">@Model?.Article.ArticleTitle</h3>
+        <span class="text-secondary" style="font-size:smaller">@Model?.Article.PublishDate.ToShortDateString() - @Model?.Article.Author</span><br />
+    </div>
+    <div class="col text-right">
+        <a href="#" class="fa faSocial fa-facebook"></a>
+        <a href="#" class="fa faSocial fa-twitter"></a>
+        <br />
+
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-2 text-center">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <button type="submit" class="btn btn-default text-danger" id="btnLikeArticle" @(Model.IsLikedBefore ? "disabled=disabled" : "")>
+                <i class="fa fa-thumbs-up"></i> Like this article
+            </button>
+        }
+        <p class="text-primary"><span id="lblLikeCount">@Model.Article.LikeCount</span> @(Model.Article.LikeCount > 1 ? "Likes" : "Like")</p>
+    </div>
+    <div class="col-7">
+        @Html.Raw(@Model?.Article.Body.Replace("\n", "<br>"))<br />
+    </div>
+    <div class="col">
+        <h5 class="text-danger">Connect with us</h5>
+        <p class="text-primary">
+            <i class="fas fa-map-marker-alt"></i> Find office locations<br />
+            <i class="far fa-envelope"></i> Email us<br />
+            <i class="fas fa-user-friends"></i> Social media @@ Pressford<br />
+        </p>
+    </div>
+</div>
+<br />
+@section scripts {
+    <script type="text/javascript">
+        $("#btnLikeArticle").click(function () {
+                PostLike(@Model.Article.Id);
+            }
+        );
+
+        function PostLike(articleId, fn) {
+            $.ajax({
+
+                type: "Post",
+                url: "@Url.Action("Like", "Home")",
+                datatype: "Json",
+                data: { Id: articleId },
+                success: function (response) {
+                    $("#lblLikeCount").text(response.likecount); //update latest like count
+                    $("#btnLikeArticle").attr("disabled", response.result); //disable like button after successful like
+                }
+            })
+        }
+    </script>
+}
+
+

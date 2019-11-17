@@ -54,6 +54,8 @@ namespace PConsulting
                 .AddDefaultUI(UIFramework.Bootstrap4);
 
             services.AddTransient<ArticleService, ArticleService>();
+            services.AddTransient<UserLikeService, UserLikeService>();
+            
 
             services.Configure<CookiePolicyOptions>(options =>
             {
