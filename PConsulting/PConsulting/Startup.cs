@@ -54,7 +54,7 @@ namespace PConsulting
                 .AddDefaultTokenProviders()
                 .AddDefaultUI(UIFramework.Bootstrap4);
 
-
+            services.AddTransient<ArticleService, ArticleService>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {

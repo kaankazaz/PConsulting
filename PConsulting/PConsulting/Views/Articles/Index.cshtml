@@ -1,0 +1,83 @@
+﻿@model List<PConsulting.Data.Article>
+
+    @{
+        ViewData["Title"] = "Articles";
+    }
+    <h1>@ViewData["Title"]</h1>
+
+    <head>
+        <style>
+            #table td {
+                vertical-align: middle;
+            }
+        </style>
+    </head>
+
+    <div id="MyModal" class="modal fade in">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div id="MyModalContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <form asp-controller="Articles" asp-action="Index" method="post" enctype="multipart/form-data">
+            <div id="toolbar" class="btn-group">
+                @Html.ActionLink("New Article", "Create", null, null, new { id = "cmdCreate", @class = "btn btn-primary" })
+            </div>
+
+            <div class="container-fluid">
+                <table id="table"
+                       data-unique-id="Id"
+                       data-sort-name="PublishDate"
+                       data-sort-order="desc"
+                       data-classes="table table-condensed table-hover table-striped"
+                       data-toggle="table"
+                       data-side-pagination="server"
+                       data-url="/Articles/LoadArticles"
+                       data-pagination="true"
+                       data-show-refresh="true"
+                       data-search="true"
+                       data-toolbar="#toolbar"
+                       data-page-size="5"
+                       data-page-list="[5,10,20,50,100,All]">
+                    <thead>
+                        <tr>
+                            <th data-field="Id" data-visible="false" data-sortable="false" data-halign="center" data-align="center">Id</th>
+                            <th data-field="ArticleTitle" data-sortable="true" data-halign="center" data-align="Left" data-width="350">Title</th>
+                            <th data-field="PublishDate" data-sortable="true" data-halign="center" data-align="center" data-width="80">Publish Date</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </form>
+    </div>
+
+
+
+
+    @section scripts {
+        <script type="text/javascript">
+
+            var $table = $('#table'),
+                $remove = $('#remove'),
+                selections = [];
+
+            function highLightRow($tr) {
+                $tr.addClass('highlight').siblings().removeClass('highlight');
+            }
+
+            $(document).ready(function () {
+                var $table = $('#table');
+
+                // register row-click event
+                $table.on('click-row.bs.table', function ($element, row, $tr) {
+                    highLightRow($tr);
+                });
+            });
+
+        </script>
+
+
+    }
