@@ -84,3 +84,8 @@ body {
     background: #55ACEE;
     color: white;
 }
+
+/*----- Comment style ----*/
+.commentText {
+    font-size: smaller;
+}

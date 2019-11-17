@@ -29,6 +29,40 @@
     </div>
     <div class="col-7">
         @Html.Raw(@Model?.Article.Body.Replace("\n", "<br>"))<br />
+
+        <hr />
+        <h5 class="text-danger">Comments</h5>
+        @if (User.Identity.IsAuthenticated)
+        {
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "PostComment", enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <div class="col-sm-9">
+                        @Html.TextAreaFor(m => m.PostedComment, new { @class = "form-control", @rows = 3 })
+                        @Html.ValidationMessageFor(m => m.PostedComment, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-default text-primary" id="btnSendComment">
+                    <i class="fas fa-comment"></i> Send Comment
+                </button>
+            }
+
+        }
+        @if (Model.Comments.Count > 0)
+        {
+            @for (var i = 0; i < Model.Comments.Count(); i++)
+            {
+                <p class="commentText text-secondary">
+                    @Model.Comments[i].Username - @Model.Comments[i].CreateDate.ToString("dd.MM.yyyy HH:mm:ss")<br />
+                    <span class="text-dark">@Model.Comments[i].CommentText</span>
+                </p>
+            }
+        }
+        else
+        {
+            <p class="commentText">No comments posted. You can make the first comment.</p>
+        }
     </div>
     <div class="col">
         <h5 class="text-danger">Connect with us</h5>

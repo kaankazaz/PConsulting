@@ -55,7 +55,7 @@ namespace PConsulting
 
             services.AddTransient<ArticleService, ArticleService>();
             services.AddTransient<UserLikeService, UserLikeService>();
-            
+            services.AddTransient<ArticleCommentService, ArticleCommentService>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {

@@ -7,6 +7,7 @@ namespace PConsulting.Data
     {
         public DbSet<Article> Articles { get; set; }
         public DbSet<UserLike> UserLikes { get; set; }
+        public DbSet<ArticleComment> ArticleComments { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

@@ -13,13 +13,15 @@ namespace PConsulting.Controllers
     {
         private ArticleService _articleService;
         private UserLikeService _userLikeService;
+        private ArticleCommentService _articleCommentService;
 
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(ArticleService articleService, UserManager<ApplicationUser> userManager, UserLikeService userLikeService)
+        public HomeController(ArticleService articleService, UserManager<ApplicationUser> userManager, UserLikeService userLikeService, ArticleCommentService articleCommentService)
         {
             _articleService = articleService;
             _userLikeService = userLikeService;
+            _articleCommentService = articleCommentService;
 
             _userManager = userManager;
         }
@@ -41,12 +43,18 @@ namespace PConsulting.Controllers
             return View(vm);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Read(int Id)
         {
+            //Get article and increment view count
             var requestedArticle = _articleService.GetById(Id);
             requestedArticle.ViewCount++;
             _articleService.Update(requestedArticle);
 
+            //Get comments of article
+            var comments = _articleCommentService.GetCommentsByArticleId(Id).ToList();
+
+            //Get logged in user
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
             bool isLikedBefore = false;
@@ -56,9 +64,24 @@ namespace PConsulting.Controllers
                 isLikedBefore = _userLikeService.CheckUserLikeExists(username, Id);
             }
 
-            ReadArticleVM ravm = new ReadArticleVM { Article = requestedArticle, IsLikedBefore = isLikedBefore };
+            ReadArticleVM ravm = new ReadArticleVM { Article = requestedArticle, IsLikedBefore = isLikedBefore, Comments = comments };
 
             return View(ravm);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Read(int Id, ReadArticleVM comment)
+        {
+            //Get logged in user
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            string username = user.UserName;
+
+            ArticleComment ac = new ArticleComment { CommentText = comment.PostedComment, ArticleId = Id, Username = username };
+
+            _articleCommentService.Create(ac);
+
+            return RedirectToAction("Read", new { Id = Id });
         }
 
         [Authorize]
