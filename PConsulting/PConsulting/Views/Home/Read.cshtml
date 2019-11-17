@@ -25,7 +25,7 @@
                 <i class="fa fa-thumbs-up"></i> Like this article
             </button>
         }
-        <p class="text-primary"><span id="lblLikeCount">@Model.Article.LikeCount</span> @(Model.Article.LikeCount > 1 ? "Likes" : "Like")</p>
+        <p class="text-primary"><span id="lblLikeCount">@Model.Article.LikeCount</span> <span id="lblLikeCountText">@(Model.Article.LikeCount > 1 ? "Likes" : "Like")</span></p>
     </div>
     <div class="col-7">
         @Html.Raw(@Model?.Article.Body.Replace("\n", "<br>"))<br />
@@ -90,6 +90,12 @@
                 data: { Id: articleId },
                 success: function (response) {
                     $("#lblLikeCount").text(response.likecount); //update latest like count
+
+                    if (response.likecount == 1)
+                        $("#lblLikeCountText").text("Like");
+                    else
+                        $("#lblLikeCountText").text("Likes");
+
                     $("#btnLikeArticle").attr("disabled", response.result); //disable like button after successful like
                 }
             })

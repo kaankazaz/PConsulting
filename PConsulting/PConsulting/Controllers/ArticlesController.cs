@@ -22,7 +22,9 @@ namespace PConsulting.Controllers
         #region Index - List
         public IActionResult Index()
         {
-            return View();
+            var topTenLikedArticles = _articleService.GetByLikes(10).ToList();
+
+            return View(topTenLikedArticles);
         }
 
         [HttpGet]
