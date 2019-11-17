@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PConsulting.Data;
-using PConsulting.Data.BOL;
 using System;
 using System.Threading.Tasks;
 
